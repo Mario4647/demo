@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ServisKu — Prototipe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.462.0/dist/umd/lucide.js"></script>
+<style>
+:root{
+  --primary:#1f6fe0; --primary-soft:#eaf2ff; --accent:#38b6ff; --emerald:#16a34a;
+  --amber:#d97706; --rose:#dc2626; --ink:#0f172a; --muted:#64748b; --bg:#f5f8fd;
+  --card:#ffffff; --line:#e2e8f0;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#f5f8fd; --card:#ffffff; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --primary-soft:#eaf2ff; }
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100%; overflow-x:hidden;}
+img,svg{max-width:100%;}
+.hidden{display:none !important;}
+.icon{width:20px;height:20px;stroke-width:2.1;}
+.grad{background:var(--primary);}
+.btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;border:none;border-radius:14px;padding:12px 18px;font-weight:700;font-size:14px;cursor:pointer;transition:.15s;}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 6px 16px -6px rgba(31,111,224,.45);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 24px -8px rgba(91,61,240,.7);}
+.btn-outline{background:transparent;border:1.5px solid var(--line);color:var(--ink);}
+.btn-ghost{background:var(--bg);color:var(--ink);}
+.btn-sm{padding:8px 12px;font-size:12.5px;border-radius:10px;}
+.btn-danger{background:#fee2e2;color:var(--rose);}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+input,select,textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;font-family:inherit;font-size:14px;background:var(--card);color:var(--ink);outline:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);}
+label{font-size:12.5px;font-weight:700;color:var(--muted);display:block;margin:0 0 6px 2px;}
+.field{margin-bottom:14px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 2px 10px -4px rgba(15,23,42,.06);}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;}
+.b-green{background:#d1fae5;color:#047857;} .b-amber{background:#fef3c7;color:#92400e;}
+.b-rose{background:#ffe0e6;color:#be123c;} .b-gray{background:#e5e7eb;color:#4b5563;}
+.b-blue{background:#dbeafe;color:#1d4ed8;}
+
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--primary-soft);}
+.login-box{width:100%;max-width:400px;background:var(--card);border-radius:26px;padding:34px 28px;box-shadow:0 30px 60px -20px rgba(31,111,224,.18);border:1px solid var(--line);}
+.logo-mark{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;margin-bottom:16px;}
+.role-tabs{display:flex;gap:8px;background:var(--bg);padding:5px;border-radius:14px;margin-bottom:18px;}
+.role-tab{flex:1;text-align:center;padding:9px 4px;border-radius:10px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;}
+.role-tab.active{background:var(--card);color:var(--primary);box-shadow:0 4px 10px rgba(0,0,0,.06);}
+.hint{font-size:12px;color:var(--muted);background:var(--bg);border-radius:10px;padding:8px 10px;margin-top:10px;}
+
+#shell{display:flex;min-height:100vh;}
+.sidebar{width:236px;background:var(--card);border-right:1px solid var(--line);padding:20px 14px;position:sticky;top:0;height:100vh;overflow-y:auto;flex-shrink:0;}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px;}
+.brand .mark{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;}
+.brand b{font-size:16px;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:12px;color:var(--muted);font-weight:600;font-size:13.5px;cursor:pointer;margin-bottom:2px;}
+.nav-item:hover{background:var(--bg);}
+.nav-item.active{background:var(--primary);color:#fff;}
+.main{flex:1;min-width:0;padding-bottom:90px;}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(245,248,253,.9);backdrop-filter:blur(10px);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);}
+[data-theme="dark"] .topbar{background:rgba(245,248,253,.9);}
+.content{padding:18px 20px 30px;max-width:1100px;}
+.pagehead{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;}
+.pagehead h1{font-size:19px;font-weight:800;}
+.pagehead p{font-size:12.5px;color:var(--muted);margin-top:2px;}
+.grid{display:grid;gap:14px;}
+.g2{grid-template-columns:repeat(2,1fr);} .g3{grid-template-columns:repeat(3,1fr);} .g4{grid-template-columns:repeat(4,1fr);}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:repeat(2,1fr);}}
+.stat{border-radius:18px;padding:16px;color:#fff;position:relative;overflow:hidden;}
+.stat .icon{opacity:.9;}
+.stat .num{font-size:24px;font-weight:800;margin-top:10px;}
+.stat .lbl{font-size:12px;opacity:.9;}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line);}
+.list-item:last-child{border-bottom:none;}
+.avatar{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;font-weight:800;}
+.empty{text-align:center;padding:50px 16px;color:var(--muted);}
+.empty .icon{width:44px;height:44px;color:var(--primary);margin-bottom:10px;}
+.tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;}
+.tab{padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:700;background:var(--card);border:1px solid var(--line);color:var(--muted);cursor:pointer;white-space:nowrap;}
+.tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+[data-theme="dark"] .tab.active{background:var(--primary);border-color:var(--primary);}
+.fab{position:fixed;right:20px;bottom:88px;width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 12px 22px -8px rgba(31,111,224,.45);cursor:pointer;z-index:30;}
+.bottomnav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:none;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px));z-index:25;}
+.bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--muted);font-size:10.5px;font-weight:700;padding:4px 8px;border-radius:10px;}
+.bn-item.active{color:var(--primary);}
+@media(max-width:860px){.sidebar{display:none;} .bottomnav{display:flex;} .main{padding-bottom:100px;} .content{padding:16px;}}
+
+.overlay{position:fixed;inset:0;background:rgba(20,15,45,.5);display:flex;align-items:flex-end;justify-content:center;z-index:100;backdrop-filter:blur(2px);}
+@media(min-width:640px){.overlay{align-items:center;}}
+.modal{background:var(--card);width:100%;max-width:460px;border-radius:22px 22px 0 0;padding:22px;max-height:88vh;overflow-y:auto;box-shadow:0 -20px 50px rgba(0,0,0,.2);}
+@media(min-width:640px){.modal{border-radius:22px;}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.modal-head h3{font-size:16.5px;font-weight:800;}
+.xbtn{width:32px;height:32px;border-radius:10px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.step-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;}
+.step-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;font-size:11px;font-weight:800;}
+.divider{height:1px;background:var(--line);margin:14px 0;}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:200;box-shadow:0 10px 30px rgba(0,0,0,.3);}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="login-box">
+    <div class="logo-mark grad"><svg class="icon" style="width:28px;height:28px"><use href="#i-cal"/></svg></div>
+    <h2 style="font-size:22px;font-weight:800;margin-bottom:4px;">Masuk ke ServisKu</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Prototipe UI — satu akun demo per peran</p>
+    <div class="role-tabs" id="roleTabs"></div>
+    <div class="field"><label>Username</label><input id="loginUser" placeholder="admin / jasa / user"></div>
+    <div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="••••••"></div>
+    <button class="btn btn-primary" style="width:100%" onclick="doLogin()"><svg class="icon"><use href="#i-login"/></svg>Masuk</button>
+    <div class="hint" id="loginHint"></div>
+  </div>
+</div>
+
+<div id="shell" class="hidden">
+  <aside class="sidebar">
+    <div class="brand"><div class="mark grad"><svg class="icon" style="width:18px;height:18px"><use href="#i-cal"/></svg></div><b>ServisKu</b></div>
+    <div id="navList"></div>
+    <div class="divider"></div>
+    <div class="nav-item" onclick="logout()"><svg class="icon"><use href="#i-logout"/></svg>Keluar</div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div style="font-size:12px;color:var(--muted);font-weight:600" id="topRole"></div>
+        <div style="font-size:15px;font-weight:800" id="topPage">Dashboard</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="xbtn" onclick="openModal('notif')"><svg class="icon" style="width:18px;height:18px"><use href="#i-bell"/></svg></div>
+        <div class="avatar" style="width:36px;height:36px;font-size:13px" id="topAvatar">U</div>
+      </div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+  <div class="bottomnav" id="bottomNav"></div>
+  <div class="fab grad hidden" id="fabBtn" onclick="openModal('newSchedule')"><svg class="icon" style="width:24px;height:24px"><use href="#i-plus"/></svg></div>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<!-- icon sprite -->
+<svg class="hidden">
+<symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+<symbol id="i-login" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></symbol>
+<symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+<symbol id="i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></symbol>
+<symbol id="i-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.6 5.6l-6 6 2 2 6-6a4 4 0 0 0 5.6-5.6l-2.8 2.8-2-2z"/></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 2 3.1 6.6 7.2.9-5.3 5 1.5 7.2L12 18.2 5.5 21.7 7 14.5l-5.3-5 7.2-.9z"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12.6 2H4a2 2 0 0 0-2 2v8.6a2 2 0 0 0 .6 1.4l8.4 8.4a2 2 0 0 0 2.8 0l7.2-7.2a2 2 0 0 0 0-2.8L13 2.6a2 2 0 0 0-1.4-.6Z"/><circle cx="7.5" cy="7.5" r="1.5"/></symbol>
+<symbol id="i-percent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5 5 19M6.5 8a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM17.5 19a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></symbol>
+<symbol id="i-receipt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2h16v20l-3-2-3 2-2-2-2 2-3-2-3 2Z"/><path d="M8 7h8M8 11h8M8 15h5"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></symbol>
+<symbol id="i-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01" stroke-width="2.4"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+<symbol id="i-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6.5V19l-6-3-6 3-3-1.5V5l6-3 6 3z"/><path d="M9 2v14M15 5v14"/></symbol>
+<symbol id="i-truck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6H2v12h2"/><path d="M14 9h4l4 4v5h-2"/><circle cx="6.5" cy="18.5" r="1.7"/><circle cx="17.5" cy="18.5" r="1.7"/></symbol>
+<symbol id="i-wifi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20h.01"/></symbol>
+<symbol id="i-qr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM19 14h2M14 19h2M19 19h2"/></symbol>
+<symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></symbol>
+</svg>
+
+<script>
+lucide.createIcons();
+const ROLES = {
+  admin:{key:'admin',label:'Admin',pass:'admin',avatar:'A',color:'#f43f5e'},
+  jasa:{key:'jasa',label:'Penyedia Jasa',pass:'jasa',avatar:'P',color:'#10b981'},
+  user:{key:'user',label:'User',pass:'user',avatar:'U',color:'#5b3df0'},
+};
+let state = {role:null, page:null};
+
+const schedules=[
+  {id:1,name:'Ganti Oli Motor',type:'Berkala · tiap 60 hari',next:'25 Okt 2026',remind:'3 hari sebelumnya',icon:'i-wrench',color:'#5b3df0'},
+  {id:2,name:'Antar Jemput Sekolah',type:'Harian · 06:30',next:'Besok, 06:30',remind:'20 menit sebelumnya',icon:'i-truck',color:'#f59e0b'},
+  {id:3,name:'Langganan Produk Perawatan',type:'Berkala · tiap 30 hari',next:'2 Nov 2026',remind:'2 hari sebelumnya',icon:'i-tag',color:'#06b6d4'},
+];
+const providers=[
+  {id:1,name:'Bengkel Jaya Motor',cat:'Servis AC, Ganti Oli',rating:4.8,dist:'1.2 km',status:'Aktif'},
+  {id:2,name:'AC Sejuk Teknik',cat:'Servis AC, Cuci AC',rating:4.6,dist:'2.0 km',status:'Aktif'},
+  {id:3,name:'Berkas Express',cat:'Urus STNK, SIM',rating:4.9,dist:'3.4 km',status:'Aktif'},
+];
+const bookings=[
+  {id:1,cust:'Rani A.',svc:'Ganti Oli',prov:'Utama',status:'Menunggu respons',time:'sisa 04:12',color:'amber'},
+  {id:2,cust:'Bagas P.',svc:'Servis AC',prov:'Cadangan 1',status:'Dikonfirmasi',time:'27 Sep, 10:00',color:'green'},
+];
+const categories=[
+  {name:'Servis AC',status:'Disetujui'},{name:'Ganti Oli',status:'Disetujui'},
+  {name:'Urus STNK',status:'Menunggu'},{name:'Laundry Kiloan',status:'Menunggu'},
+];
+const txs=[
+  {id:'TRX-0091',svc:'Ganti Oli',prov:'Bengkel Jaya Motor',total:'Rp 185.000',status:'Selesai',pay:'QRIS'},
+  {id:'TRX-0090',svc:'Servis AC',prov:'AC Sejuk Teknik',total:'Rp 320.000',status:'Sengketa',pay:'Cash'},
+  {id:'TRX-0089',svc:'Urus STNK',prov:'Berkas Express',total:'Rp 250.000',status:'Selesai',pay:'QRIS'},
+];
+const providerQueue=[
+  {name:'Kirana Laundry',cat:'Laundry Kiloan',date:'24 Sep 2026'},
+  {name:'Fresh Detailing',cat:'Cuci Motor',date:'23 Sep 2026'},
+];
+
+const NAV = {
+  user:[
+    {k:'home',l:'Beranda',i:'i-home'},{k:'search',l:'Cari Jasa',i:'i-search'},
+    {k:'history',l:'Riwayat',i:'i-history'},{k:'profile',l:'Profil',i:'i-user'},
+  ],
+  jasa:[
+    {k:'dash',l:'Dashboard',i:'i-grid'},{k:'bookings',l:'Booking',i:'i-list'},
+    {k:'commission',l:'Komisi',i:'i-wallet'},{k:'profile',l:'Profil',i:'i-user'},
+  ],
+  admin:[
+    {k:'dash',l:'Dashboard',i:'i-grid'},{k:'verif',l:'Verifikasi Provider',i:'i-shield'},
+    {k:'cat',l:'Kategori Jasa',i:'i-tag'},{k:'commission',l:'Komisi & Pajak',i:'i-percent'},
+    {k:'tx',l:'Transaksi',i:'i-receipt'},{k:'lang',l:'Bahasa',i:'i-globe'},
+    {k:'users',l:'Kelola User',i:'i-user'},{k:'audit',l:'Audit Log',i:'i-file-text'},
+  ]
+};
+
+function doLogin(){
+  const r=state.role||'user';
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value.trim();
+  if(u!==ROLES[r].key || p!==ROLES[r].pass){toast('Username/password salah untuk peran '+ROLES[r].label);return;}
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('shell').classList.remove('hidden');
+  document.getElementById('fabBtn').classList.toggle('hidden', r!=='user');
+  document.getElementById('topRole').textContent=ROLES[r].label;
+  const av=document.getElementById('topAvatar'); av.textContent=ROLES[r].avatar; av.style.background=ROLES[r].color;
+  buildNav(r);
+  goTo(NAV[r][0].k);
+}
+function logout(){document.getElementById('shell').classList.add('hidden');document.getElementById('login').classList.remove('hidden');}
+function initRoleTabs(){
+  const wrap=document.getElementById('roleTabs'); wrap.innerHTML='';
+  Object.values(ROLES).forEach((r,idx)=>{
+    const d=document.createElement('div'); d.className='role-tab'+(idx===2?' active':'');
+    d.textContent=r.label; d.onclick=()=>selectRole(r.key,d);
+    wrap.appendChild(d);
+  });
+  selectRole('user', wrap.children[2]);
+}
+function selectRole(key,el){
+  state.role=key;
+  [...el.parentElement.children].forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('loginHint').innerHTML=`Demo: username <b>${key}</b> · password <b>${ROLES[key].pass}</b>`;
+  document.getElementById('loginUser').value=''; document.getElementById('loginPass').value='';
+}
+function buildNav(r){
+  const side=document.getElementById('navList'); side.innerHTML='';
+  const bn=document.getElementById('bottomNav'); bn.innerHTML='';
+  NAV[r].forEach(item=>{
+    const s=document.createElement('div'); s.className='nav-item'; s.id='side-'+item.k;
+    s.innerHTML=`<i data-lucide="${item.i.replace('i-','')}" class="icon"></i>${item.l}`;
+    s.onclick=()=>goTo(item.k); side.appendChild(s);
+  });
+  NAV[r].slice(0,5).forEach(item=>{
+    const b=document.createElement('div'); b.className='bn-item'; b.id='bn-'+item.k;
+    b.innerHTML=`<i data-lucide="${item.i.replace('i-','')}" class="icon"></i>${item.l}`;
+    b.onclick=()=>goTo(item.k); bn.appendChild(b);
+  });
+  lucide.createIcons();
+}
+function goTo(k){
+  state.page=k;
+  document.querySelectorAll('.nav-item,.bn-item').forEach(n=>n.classList.remove('active'));
+  const s=document.getElementById('side-'+k), b=document.getElementById('bn-'+k);
+  if(s)s.classList.add('active'); if(b)b.classList.add('active');
+  const label = NAV[state.role].find(n=>n.k===k).l;
+  document.getElementById('topPage').textContent=label;
+  document.getElementById('content').innerHTML = PAGES[state.role][k]();
+  lucide.createIcons();
+}
+function toast(msg){
+  const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
+  document.getElementById('toastRoot').appendChild(t);
+  setTimeout(()=>t.remove(),2600);
+}
+
+function statCard(icon,label,num,bg){return `<div class="stat" style="background:${bg}"><i data-lucide="${icon}" class="icon"></i><div class="num">${num}</div><div class="lbl">${label}</div></div>`;}
+function emptyState(icon,text,sub){return `<div class="empty"><i data-lucide="${icon}" class="icon"></i><div style="font-weight:700;color:var(--ink)">${text}</div><div style="font-size:12.5px;margin-top:4px">${sub||''}</div></div>`;}
+function badge(text,cls){return `<span class="badge b-${cls}">${text}</span>`;}
+
+function pageUserHome(){
+  return `
+  <div class="pagehead"><div><h1>Halo, Rani 👋</h1><p>Kalender jadwal layanan kamu</p></div></div>
+  <div class="grid g3" style="margin-bottom:18px">
+    ${statCard('calendar-clock','Jadwal Aktif','3','#1f6fe0')}
+    ${statCard('bell-ring','Pengingat Custom','3','#0e7490')}
+    ${statCard('history','Selesai Bulan Ini','5','#16a34a')}
+  </div>
+  <div class="card">
+    <div style="font-weight:800;margin-bottom:10px">Jadwal Terdekat</div>
+    ${schedules.map(s=>`
+      <div class="list-item" style="cursor:pointer" onclick="openModal('scheduleDetail',${s.id})">
+        <div class="avatar" style="background:${s.color}"><i data-lucide="${s.icon.replace('i-','')}" style="width:20px;height:20px"></i></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:13.5px">${s.name}</div>
+          <div style="font-size:12px;color:var(--muted)">${s.type} · diingatkan ${s.remind}</div>
+        </div>
+        <div style="text-align:right;font-size:12px;color:var(--muted);font-weight:700">${s.next}</div>
+      </div>`).join('')}
+  </div>`;
+}
+function pageUserSearch(){
+  return `
+  <div class="pagehead"><div><h1>Cari Penyedia Jasa</h1><p>Berdasarkan lokasi & rating terdekat</p></div></div>
+  <div class="field" style="max-width:420px"><input placeholder="Cari kategori jasa, misal servis AC..."></div>
+  <div class="grid" style="grid-template-columns:1fr;gap:12px">
+    ${providers.map(p=>`
+      <div class="card" style="display:flex;gap:12px;align-items:center;cursor:pointer" onclick="openModal('providerDetail',${p.id})">
+        <div class="avatar" style="background:#1f6fe0">${p.name[0]}</div>
+        <div style="flex:1">
+          <div style="font-weight:800;font-size:14px">${p.name} ${badge('Aktif','green')}</div>
+          <div style="font-size:12.5px;color:var(--muted);margin-top:2px">${p.cat}</div>
+          <div style="font-size:12px;margin-top:5px;display:flex;gap:12px;color:var(--muted)">
+            <span style="color:var(--amber);font-weight:700"><i data-lucide="star" class="icon" style="width:13px;height:13px;vertical-align:-2px;fill:currentColor"></i> ${p.rating}</span>
+            <span><i data-lucide="map-pin" class="icon" style="width:13px;height:13px;vertical-align:-2px"></i> ${p.dist}</span>
+          </div>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+function pageUserHistory(){
+  return `
+  <div class="pagehead"><div><h1>Riwayat Transaksi</h1><p>Semua booking yang pernah kamu lakukan</p></div></div>
+  <div class="tabs"><div class="tab active">Semua</div><div class="tab">Selesai</div><div class="tab">Dibatalkan</div></div>
+  <div class="card">
+    ${txs.map(t=>`
+      <div class="list-item">
+        <div class="avatar" style="background:#0e7490"><i data-lucide="receipt" style="width:18px;height:18px"></i></div>
+        <div style="flex:1"><div style="font-weight:700;font-size:13.5px">${t.svc} · ${t.prov}</div><div style="font-size:12px;color:var(--muted)">${t.id} · ${t.pay}</div></div>
+        <div style="text-align:right"><div style="font-weight:800;font-size:13px">${t.total}</div>${badge(t.status, t.status==='Selesai'?'green':'rose')}</div>
+      </div>`).join('')}
+  </div>`;
+}
+function pageUserProfile(){
+  return `
+  <div class="pagehead"><div><h1>Profil Saya</h1><p>Kelola data akun & preferensi</p></div></div>
+  <div class="card" style="display:flex;gap:14px;align-items:center;margin-bottom:14px">
+    <div class="avatar" style="width:60px;height:60px;font-size:20px;background:#1f6fe0">R</div>
+    <div><div style="font-weight:800;font-size:16px">Rani Anggraini</div><div style="font-size:12.5px;color:var(--muted)">rani@email.com · Tulungagung</div></div>
+  </div>
+  <div class="card">
+    <div class="field"><label>Bahasa Aplikasi</label><select><option>Indonesia</option><option>English</option></select></div>
+    <div class="field"><label>Zona Waktu</label><select><option>WIB — Asia/Jakarta</option><option>WITA — Asia/Makassar</option><option>WIT — Asia/Jayapura</option></select></div>
+    <button class="btn btn-outline" style="width:100%"><i data-lucide="log-out" class="icon"></i>Keluar Akun</button>
+  </div>`;
+}
+const PAGES = {user:{home:pageUserHome, search:pageUserSearch, history:pageUserHistory, profile:pageUserProfile}};
+
+function pageProvDash(){
+  return `
+  <div class="pagehead"><div><h1>Dashboard Provider</h1><p>Ringkasan performa Bengkel Jaya Motor</p></div></div>
+  <div class="grid g3" style="margin-bottom:18px">
+    ${statCard('inbox','Booking Aktif','2','#16a34a')}
+    ${statCard('star','Rating Rata-rata','4.8','#d97706')}
+    ${statCard('wallet','Komisi Tertunggak','Rp 42rb','#4338ca')}
+  </div>
+  <div class="card">
+    <div style="font-weight:800;margin-bottom:10px">Booking Masuk Terbaru</div>
+    ${bookings.map(b=>`
+      <div class="list-item" style="cursor:pointer" onclick="openModal('incomingBooking',${b.id})">
+        <div class="avatar" style="background:#1f6fe0">${b.cust[0]}</div>
+        <div style="flex:1"><div style="font-weight:700;font-size:13.5px">${b.cust} · ${b.svc}</div><div style="font-size:12px;color:var(--muted)">Sebagai ${b.prov}</div></div>
+        <div style="text-align:right">${badge(b.status,b.color)}<div style="font-size:11px;color:var(--muted);margin-top:3px">${b.time}</div></div>
+      </div>`).join('')}
+  </div>`;
+}
+function pageProvBookings(){
+  return `
+  <div class="pagehead"><div><h1>Booking</h1><p>Kelola semua booking masuk</p></div></div>
+  <div class="tabs"><div class="tab active">Aktif</div><div class="tab">Selesai</div><div class="tab">Dibatalkan</div></div>
+  <div class="card">${bookings.map(b=>`
+    <div class="list-item" style="cursor:pointer" onclick="openModal('sessionSetup',${b.id})">
+      <div class="avatar" style="background:#16a34a"><i data-lucide="wrench" style="width:18px;height:18px"></i></div>
+      <div style="flex:1"><div style="font-weight:700;font-size:13.5px">${b.cust} · ${b.svc}</div><div style="font-size:12px;color:var(--muted)">${b.time}</div></div>
+      ${badge(b.status,b.color)}
+    </div>`).join('')}</div>`;
+}
+function pageProvCommission(){
+  return `
+  <div class="pagehead"><div><h1>Komisi & Tagihan</h1><p>Periode tagihan: tiap 2 minggu</p></div></div>
+  <div class="card" style="background:#1f6fe0;color:#fff;margin-bottom:14px">
+    <div style="font-size:12.5px;opacity:.9">Total Belum Dibayar</div>
+    <div style="font-size:28px;font-weight:800;margin:4px 0">Rp 42.000</div>
+    <div style="font-size:12px;opacity:.85">Jatuh tempo 30 Sep 2026</div>
+    <button class="btn" style="background:#fff;color:var(--primary);margin-top:12px" onclick="toast('Bukti transfer terkirim ke admin')">Tandai Sudah Transfer</button>
+  </div>
+  <div class="card">${txs.map(t=>`
+    <div class="list-item"><div style="flex:1"><div style="font-weight:700;font-size:13px">${t.id}</div><div style="font-size:12px;color:var(--muted)">${t.svc}</div></div><div style="font-weight:800;font-size:13px">${t.total}</div></div>`).join('')}</div>`;
+}
+function pageProvProfile(){
+  return `
+  <div class="pagehead"><div><h1>Profil Usaha</h1><p>Kelola data & kategori jasa</p></div></div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="field"><label>Nama Usaha</label><input value="Bengkel Jaya Motor"></div>
+    <div class="field"><label>Nomor Rekening / QRIS</label><input value="•••• •••• 4417" disabled></div>
+  </div>
+  <div class="card">
+    <div style="font-weight:800;margin-bottom:10px">Kategori Jasa Saya</div>
+    ${categories.filter(c=>c.status==='Disetujui').map(c=>`<div class="list-item"><div style="flex:1;font-weight:600;font-size:13.5px">${c.name}</div>${badge('Aktif','green')}</div>`).join('')}
+    <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="toast('Formulir tambah kategori dibuka')"><i data-lucide="plus" class="icon"></i>Tambah Kategori</button>
+  </div>`;
+}
+PAGES.jasa = {dash:pageProvDash, bookings:pageProvBookings, commission:pageProvCommission, profile:pageProvProfile};
+
+function pageAdminDash(){
+  return `
+  <div class="pagehead"><div><h1>Dashboard Admin</h1><p>Ringkasan kondisi aplikasi</p></div></div>
+  <div class="grid g4" style="margin-bottom:18px">
+    ${statCard('users','Total User','1.204','#1f6fe0')}
+    ${statCard('shield-check','Provider Aktif','86','#16a34a')}
+    ${statCard('hourglass','Menunggu Verifikasi','7','#d97706')}
+    ${statCard('receipt','Transaksi Bulan Ini','312','#0e7490')}
+  </div>
+  <div class="card"><div style="font-weight:800;margin-bottom:10px">Antrian Verifikasi Provider</div>
+  ${providerQueue.map(p=>`<div class="list-item"><div class="avatar" style="background:#dc2626">${p.name[0]}</div><div style="flex:1"><div style="font-weight:700;font-size:13.5px">${p.name}</div><div style="font-size:12px;color:var(--muted)">${p.cat} · ${p.date}</div></div><button class="btn btn-primary btn-sm" onclick="openModal('verifyProvider')">Tinjau</button></div>`).join('')}
+  </div>`;
+}
+function pageAdminVerif(){
+  return `<div class="pagehead"><div><h1>Verifikasi Penyedia Jasa</h1><p>${providerQueue.length} pendaftar menunggu tinjauan</p></div></div>
+  <div class="card">${providerQueue.map(p=>`
+    <div class="list-item"><div class="avatar" style="background:#d97706">${p.name[0]}</div>
+      <div style="flex:1"><div style="font-weight:700;font-size:13.5px">${p.name}</div><div style="font-size:12px;color:var(--muted)">Kategori: ${p.cat} · Daftar ${p.date}</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-primary btn-sm" onclick="toast('${p.name} disetujui')"><i data-lucide="check" class="icon"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="toast('${p.name} ditolak')"><i data-lucide="x" class="icon"></i></button>
+      </div></div>`).join('')}</div>`;
+}
+function pageAdminCat(){
+  return `<div class="pagehead"><div><h1>Kelola Kategori Jasa</h1><p>Moderasi kategori baru dari provider</p></div></div>
+  <div class="tabs"><div class="tab active">Menunggu</div><div class="tab">Semua Kategori</div></div>
+  <div class="card">${categories.map(c=>`
+    <div class="list-item"><div style="flex:1;font-weight:700;font-size:13.5px">${c.name}</div>${badge(c.status,c.status==='Disetujui'?'green':'amber')}
+    ${c.status==='Menunggu'?`<button class="btn btn-primary btn-sm" style="margin-left:8px" onclick="toast('Kategori disetujui')">Setujui</button>`:''}
+    </div>`).join('')}</div>`;
+}
+function pageAdminCommission(){
+  return `<div class="pagehead"><div><h1>Komisi & Pajak</h1><p>Pengaturan global aplikasi</p></div></div>
+  <div class="grid g2">
+    <div class="card"><label>Persentase Komisi</label><input value="5" style="max-width:120px"><p style="font-size:12px;color:var(--muted);margin-top:6px">Berlaku untuk transaksi baru</p></div>
+    <div class="card"><label>Periode Tagihan</label><select><option>Tiap 2 minggu</option><option>Bulanan</option><option>Mingguan</option></select></div>
+    <div class="card"><label>Pajak Transaksi</label><div style="display:flex;align-items:center;gap:8px;margin-top:6px"><input type="checkbox"> <span style="font-size:13px">Aktifkan pajak (opsional)</span></div></div>
+    <div class="card"><label>Persentase Pajak</label><input value="0" style="max-width:120px" disabled></div>
+  </div>
+  <button class="btn btn-primary" style="margin-top:14px" onclick="toast('Pengaturan disimpan')">Simpan Pengaturan</button>`;
+}
+function pageAdminTx(){
+  return `<div class="pagehead"><div><h1>Monitor Transaksi</h1><p>Semua transaksi di aplikasi</p></div></div>
+  <div class="card">${txs.map(t=>`<div class="list-item"><div style="flex:1"><div style="font-weight:700;font-size:13.5px">${t.id} · ${t.svc}</div><div style="font-size:12px;color:var(--muted)">${t.prov}</div></div><div style="text-align:right">${badge(t.status,t.status==='Sengketa'?'rose':'green')}<div style="font-weight:800;font-size:13px;margin-top:3px">${t.total}</div></div></div>`).join('')}</div>`;
+}
+function pageAdminLang(){
+  return `<div class="pagehead"><div><h1>Kelola Bahasa</h1><p>Bahasa yang tersedia di aplikasi</p></div></div>
+  <div class="card">
+    <div class="list-item"><div style="flex:1;font-weight:700">🇮🇩 Indonesia</div>${badge('Aktif','green')}</div>
+    <div class="list-item"><div style="flex:1;font-weight:700">🇬🇧 English</div>${badge('Nonaktif','gray')}</div>
+  </div>
+  <button class="btn btn-outline btn-sm" style="margin-top:12px" onclick="toast('Form tambah bahasa dibuka')"><i data-lucide="plus" class="icon"></i>Tambah Bahasa</button>`;
+}
+function pageAdminUsers(){
+  return `<div class="pagehead"><div><h1>Kelola User</h1><p>Daftar akun User terdaftar</p></div></div>
+  <div class="field" style="max-width:340px"><input placeholder="Cari nama/email user..."></div>
+  <div class="card"><div class="list-item"><div class="avatar" style="background:#1f6fe0">R</div><div style="flex:1"><div style="font-weight:700;font-size:13.5px">Rani Anggraini</div><div style="font-size:12px;color:var(--muted)">rani@email.com</div></div>${badge('Aktif','green')}</div></div>`;
+}
+function pageAdminAudit(){
+  return `<div class="pagehead"><div><h1>Audit Log</h1><p>Riwayat aksi admin — hanya baca</p></div></div>
+  <div class="card">
+    ${[['Menyetujui provider Kirana Laundry','2 jam lalu'],['Mengubah rate komisi ke 5%','1 hari lalu'],['Pause akun AC Dingin Sejahtera','2 hari lalu']].map(a=>`
+    <div class="list-item"><div class="avatar" style="background:#475569"><i data-lucide="file-text" style="width:16px;height:16px"></i></div><div style="flex:1"><div style="font-weight:600;font-size:13px">${a[0]}</div><div style="font-size:11.5px;color:var(--muted)">${a[1]}</div></div></div>`).join('')}
+  </div>`;
+}
+PAGES.admin = {dash:pageAdminDash, verif:pageAdminVerif, cat:pageAdminCat, commission:pageAdminCommission, tx:pageAdminTx, lang:pageAdminLang, users:pageAdminUsers, audit:pageAdminAudit};
+
+function openModal(kind,id){
+  let html='';
+  if(kind==='notif'){
+    html=modalWrap('Notifikasi',`${emptyState('bell','Belum ada notifikasi baru','Kamu akan diberi tahu sesuai waktu pengingat yang diatur')}`);
+  } else if(kind==='scheduleDetail'){
+    const s=schedules.find(x=>x.id===id);
+    html=modalWrap(s.name,`
+      <div class="field"><label>Tipe Jadwal</label><input value="${s.type}" disabled></div>
+      <div class="field"><label>Waktu Pengingat (custom)</label><input value="${s.remind}" disabled></div>
+      <div class="field"><label>Jadwal Berikutnya</label><input value="${s.next}" disabled></div>
+      <div style="display:flex;gap:8px"><button class="btn btn-outline" style="flex:1">Edit</button><button class="btn btn-primary" style="flex:1" onclick="closeModal();openModal('reminderPopup')">Simulasi Popup Pengingat</button></div>`);
+  } else if(kind==='reminderPopup'){
+    html=modalWrap('Waktunya Ganti Oli!',`
+      <p style="font-size:13.5px;color:var(--muted);margin-bottom:16px">Jadwal kamu tiba sesuai waktu pengingat yang kamu atur sendiri.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn-ghost" style="width:100%;justify-content:flex-start;padding:14px" onclick="toast('Ditandai layani sendiri');closeModal()"><i data-lucide="hand" class="icon"></i>Layani Sendiri</button>
+        <button class="btn btn-primary" style="width:100%;justify-content:flex-start;padding:14px" onclick="closeModal();openModal('search2')"><i data-lucide="search" class="icon"></i>Cari Penyedia Jasa</button>
+      </div>`);
+  } else if(kind==='providerDetail'){
+    const p=providers.find(x=>x.id===id);
+    html=modalWrap(p.name,`
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px"><div class="avatar" style="width:52px;height:52px;background:#1f6fe0">${p.name[0]}</div><div><div style="font-weight:800">${p.name}</div><div style="font-size:12px;color:var(--muted)">${p.cat}</div></div></div>
+      <div style="display:flex;gap:16px;margin-bottom:14px;font-size:13px">
+        <span><i data-lucide="star" class="icon" style="width:14px;height:14px;color:var(--amber);vertical-align:-2px;fill:currentColor"></i> ${p.rating} (128 ulasan)</span>
+        <span><i data-lucide="map-pin" class="icon" style="width:14px;height:14px;vertical-align:-2px"></i> ${p.dist}</span>
+      </div>
+      <div style="display:flex;gap:8px"><button class="btn btn-outline" style="flex:1" onclick="toast('Ditambahkan sebagai Cadangan')">+ Cadangan</button><button class="btn btn-primary" style="flex:1" onclick="closeModal();openModal('confirmSelect')">Pilih sebagai Utama</button></div>`);
+  } else if(kind==='confirmSelect'){
+    html=modalWrap('Konfirmasi Pemilihan',`
+      <div class="step-row"><div class="step-dot" style="background:#1f6fe0">U</div><div><div style="font-weight:700;font-size:13.5px">Bengkel Jaya Motor</div><div style="font-size:11.5px;color:var(--muted)">Provider Utama</div></div></div>
+      <div class="step-row"><div class="step-dot" style="background:#d97706">C1</div><div><div style="font-weight:700;font-size:13.5px">AC Sejuk Teknik</div><div style="font-size:11.5px;color:var(--muted)">Cadangan 1</div></div></div>
+      <p style="font-size:11.5px;color:var(--muted);margin:10px 0 14px">Minimal 2 penyedia dipilih. Otomatis beralih ke cadangan kalau utama tidak merespons.</p>
+      <button class="btn btn-primary" style="width:100%" onclick="closeModal();openModal('bookingStatus')">Kirim Permintaan</button>`);
+  } else if(kind==='bookingStatus'){
+    html=modalWrap('Status Booking',`
+      <div class="step-row"><div class="step-dot" style="background:#16a34a"><i data-lucide="check" style="width:14px;height:14px"></i></div><div style="font-weight:700;font-size:13.5px">Terkirim ke provider utama</div></div>
+      <div class="step-row"><div class="step-dot" style="background:#d97706"><i data-lucide="clock" style="width:14px;height:14px"></i></div><div><div style="font-weight:700;font-size:13.5px">Menunggu respons</div><div style="font-size:11.5px;color:var(--muted)">Sisa waktu 04:32 sebelum otomatis dialihkan</div></div></div>
+      <div class="step-row" style="opacity:.4"><div class="step-dot" style="background:#9ca0b5">3</div><div style="font-weight:700;font-size:13.5px">Sesi layanan ditentukan</div></div>
+      <button class="btn btn-outline" style="width:100%;margin-top:10px" onclick="closeModal();openModal('sessionInfo')">Lihat Simulasi Terkonfirmasi</button>`);
+  } else if(kind==='sessionInfo'){
+    html=modalWrap('Detail Sesi Layanan',`
+      <div class="field"><label>Provider</label><input value="Bengkel Jaya Motor" disabled></div>
+      <div class="field"><label>Metode Layanan</label><input value="Datang Langsung" disabled></div>
+      <div class="field"><label>Jadwal</label><input value="25 Sep 2026, 14:00" disabled></div>
+      <button class="btn btn-primary" style="width:100%" onclick="closeModal();openModal('payment')">Lanjut ke Pembayaran</button>`);
+  } else if(kind==='payment'){
+    html=modalWrap('Pembayaran',`
+      <div class="card" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>Subtotal</span><span>Rp 175.000</span></div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;color:var(--muted)"><span>Pajak (0%)</span><span>Rp 0</span></div><div style="display:flex;justify-content:space-between;font-weight:800;font-size:15px;border-top:1px dashed var(--line);padding-top:8px"><span>Total</span><span>Rp 175.000</span></div></div>
+      <div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn btn-outline" style="flex:1">Cash</button><button class="btn btn-primary" style="flex:1"><i data-lucide="qr-code" class="icon"></i>QRIS</button></div>
+      <div style="text-align:center;padding:20px;background:var(--bg);border-radius:14px;margin-bottom:12px"><i data-lucide="qr-code" style="width:90px;height:90px"></i></div>
+      <button class="btn btn-primary" style="width:100%" onclick="closeModal();openModal('rating')">Saya Sudah Bayar</button>`);
+  } else if(kind==='rating'){
+    html=modalWrap('Beri Rating',`
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="display:flex;justify-content:center;gap:6px;margin-bottom:10px">${[1,2,3,4,5].map(()=>`<i data-lucide="star" class="icon" style="width:26px;height:26px;color:var(--amber);fill:currentColor"></i>`).join('')}</div>
+      </div>
+      <div class="field"><textarea rows="3" placeholder="Ceritakan pengalamanmu..."></textarea></div>
+      <button class="btn btn-primary" style="width:100%" onclick="toast('Terima kasih atas rating-nya!');closeModal()">Kirim Ulasan</button>`);
+  } else if(kind==='newSchedule'){
+    html=modalWrap('Buat Jadwal Baru',`
+      <div class="field"><label>Nama Jadwal</label><input placeholder="Contoh: Servis AC Rumah"></div>
+      <div class="field"><label>Tipe</label><select><option>Layanan Berkala</option><option>Jadwal Harian</option></select></div>
+      <div class="field"><label>Interval</label><div style="display:flex;gap:8px"><input placeholder="60" style="flex:1"><select style="flex:1"><option>Hari</option><option>Minggu</option><option>Bulan</option></select></div></div>
+      <div class="field" style="background:var(--bg);padding:12px;border-radius:12px"><label>⏰ Waktu Pengingat (custom)</label><div style="display:flex;gap:8px"><input placeholder="3" style="flex:1"><select style="flex:1"><option>Hari sebelumnya</option><option>Jam sebelumnya</option><option>Menit sebelumnya</option></select></div></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:6px" onclick="toast('Jadwal berhasil dibuat');closeModal()">Simpan Jadwal</button>`);
+  } else if(kind==='incomingBooking'){
+    const b=bookings.find(x=>x.id===id);
+    html=modalWrap('Booking Masuk',`
+      <div style="text-align:center;margin-bottom:14px"><div class="avatar" style="width:54px;height:54px;margin:0 auto 8px;background:#1f6fe0">${b.cust[0]}</div><div style="font-weight:800">${b.cust}</div><div style="font-size:12.5px;color:var(--muted)">${b.svc} · sebagai ${b.prov}</div></div>
+      <div class="card" style="text-align:center;margin-bottom:14px;background:var(--bg)"><div style="font-size:12px;color:var(--muted)">Batas waktu merespons</div><div style="font-size:20px;font-weight:800;color:var(--rose)">${b.time}</div></div>
+      <div style="display:flex;gap:8px"><button class="btn btn-danger" style="flex:1" onclick="toast('Booking ditolak');closeModal()">Tolak</button><button class="btn btn-primary" style="flex:1" onclick="closeModal();openModal('sessionSetup',${b.id})">Terima</button></div>`);
+  } else if(kind==='sessionSetup'){
+    html=modalWrap('Atur Sesi Layanan',`
+      <div class="field"><label>Metode Layanan</label><select><option>Datang Langsung</option><option>Dikirim</option><option>Online</option></select></div>
+      <div class="field"><label>Tanggal & Waktu</label><input type="datetime-local"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="toast('Sesi layanan terkirim ke user');closeModal()">Kirim Konfirmasi ke User</button>`);
+  } else if(kind==='verifyProvider'){
+    html=modalWrap('Tinjau Pendaftaran',`
+      <div class="field"><label>Nama Usaha</label><input value="Kirana Laundry" disabled></div>
+      <div class="field"><label>Kategori Diajukan</label><input value="Laundry Kiloan" disabled></div>
+      <div class="field"><label>Foto Tempat Usaha</label><div style="height:90px;background:var(--bg);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--muted)"><i data-lucide="image" class="icon"></i></div></div>
+      <div style="display:flex;gap:8px"><button class="btn btn-danger" style="flex:1" onclick="toast('Ditolak');closeModal()">Tolak</button><button class="btn btn-primary" style="flex:1" onclick="toast('Provider disetujui');closeModal()">Setujui</button></div>`);
+  } else if(kind==='search2'){
+    document.getElementById('modalRoot').innerHTML='';
+    goTo('search'); return;
+  }
+  document.getElementById('modalRoot').innerHTML = `<div class="overlay" onclick="if(event.target===this)closeModal()">${html}</div>`;
+  lucide.createIcons();
+}
+function modalWrap(title,body){
+  return `<div class="modal"><div class="modal-head"><h3>${title}</h3><div class="xbtn" onclick="closeModal()"><i data-lucide="x" style="width:16px;height:16px"></i></div></div>${body}</div>`;
+}
+function closeModal(){document.getElementById('modalRoot').innerHTML='';}
+
+initRoleTabs();
+</script>
+</body>
+</html>
