@@ -97,6 +97,34 @@ label{font-size:12.5px;font-weight:700;color:var(--muted);display:block;margin:0
 .step-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;font-size:11px;font-weight:800;}
 .divider{height:1px;background:var(--line);margin:14px 0;}
 .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:200;box-shadow:0 10px 30px rgba(0,0,0,.3);}
+.calwrap{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 2px 10px -4px rgba(15,23,42,.06);margin-bottom:16px;}
+.calhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.calhead b{font-size:14.5px;}
+.calnav{width:30px;height:30px;border-radius:9px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;}
+.caldow{font-size:10.5px;font-weight:800;color:var(--muted);padding:4px 0;}
+.calday{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;color:var(--ink);}
+.calday.muted{color:#c8ced9;}
+.calday.today{background:var(--primary);color:#fff;font-weight:800;}
+.calday .dots{display:flex;gap:2px;margin-top:2px;}
+.calday .dots span{width:4px;height:4px;border-radius:50%;}
+.legend{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);font-weight:600;}
+.legend-item i{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.chartcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 2px 10px -4px rgba(15,23,42,.06);}
+.chart-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.chart-head b{font-size:14px;}
+.chart-head .sub{font-size:11.5px;color:var(--muted);}
+.barrow{display:flex;align-items:flex-end;gap:10px;height:130px;padding:0 2px;overflow-x:auto;}
+.barcol{flex:1 0 34px;min-width:34px;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;}
+.bar{width:100%;max-width:26px;border-radius:7px 7px 3px 3px;position:relative;min-height:6px;transition:.2s;}
+.bar:hover{filter:brightness(1.08);}
+.barval{font-size:9.5px;font-weight:800;color:var(--muted);white-space:nowrap;}
+.barlbl{font-size:10px;color:var(--muted);font-weight:700;margin-top:6px;white-space:nowrap;}
+.donutwrap{display:flex;align-items:center;gap:16px;}
+.trend-up{color:#16a34a;font-size:11px;font-weight:800;background:#dcfce7;padding:2px 8px;border-radius:999px;white-space:nowrap;}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:760px){.chart-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -291,8 +319,45 @@ function toast(msg){
 function statCard(icon,label,num,bg){return `<div class="stat" style="background:${bg}"><i data-lucide="${icon}" class="icon"></i><div class="num">${num}</div><div class="lbl">${label}</div></div>`;}
 function emptyState(icon,text,sub){return `<div class="empty"><i data-lucide="${icon}" class="icon"></i><div style="font-weight:700;color:var(--ink)">${text}</div><div style="font-size:12.5px;margin-top:4px">${sub||''}</div></div>`;}
 function badge(text,cls){return `<span class="badge b-${cls}">${text}</span>`;}
+function miniCalendar(markedDays){
+  const dows=['M','S','S','R','K','J','S'];
+  const today=25, daysInMonth=30, startOffset=2;
+  let cells='';
+  for(let i=0;i<startOffset;i++) cells+=`<div class="calday muted">${28+i-2>0?'':''}</div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const mark = markedDays[d];
+    const isToday = d===today;
+    cells+=`<div class="calday ${isToday?'today':''}" onclick="toast('Tanggal ${d}: ${mark?mark.label:'tidak ada jadwal'}')">
+      <span>${d}</span>
+      ${mark?`<div class="dots"><span style="background:${isToday?'#fff':mark.color}"></span></div>`:''}
+    </div>`;
+  }
+  return `<div class="calwrap">
+    <div class="calhead"><div class="calnav"><i data-lucide="chevron-left" style="width:15px;height:15px"></i></div><b>September 2026</b><div class="calnav"><i data-lucide="chevron-right" style="width:15px;height:15px"></i></div></div>
+    <div class="calgrid">${dows.map(d=>`<div class="caldow">${d}</div>`).join('')}${cells}</div>
+    <div class="legend">
+      <div class="legend-item"><i style="background:#1f6fe0"></i>Layanan Berkala</div>
+      <div class="legend-item"><i style="background:#d97706"></i>Jadwal Harian</div>
+      <div class="legend-item"><i style="background:#0e7490"></i>Langganan</div>
+    </div>
+  </div>`;
+}
+function barChart(title,sub,data,color,unit){
+  const max=Math.max(...data.map(d=>d.v));
+  return `<div class="chartcard">
+    <div class="chart-head" style="gap:8px"><div><b>${title}</b><div class="sub">${sub}</div></div><span class="trend-up"><i data-lucide="trending-up" style="width:11px;height:11px;vertical-align:-1px"></i> naik 12%</span></div>
+    <div class="barrow">${data.map(d=>`
+      <div class="barcol">
+        <span class="barval">${d.v}${unit||''}</span>
+        <div class="bar" style="height:${Math.max((d.v/max)*100,5)}%;background:${color}"></div>
+        <span class="barlbl">${d.l}</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
 
 function pageUserHome(){
+  const marked={2:{label:'Langganan Produk',color:'#0e7490'},8:{label:'Antar Jemput',color:'#d97706'},15:{label:'Antar Jemput',color:'#d97706'},22:{label:'Antar Jemput',color:'#d97706'},25:{label:'Ganti Oli Motor',color:'#1f6fe0'}};
   return `
   <div class="pagehead"><div><h1>Halo, Rani 👋</h1><p>Kalender jadwal layanan kamu</p></div></div>
   <div class="grid g3" style="margin-bottom:18px">
@@ -300,6 +365,7 @@ function pageUserHome(){
     ${statCard('bell-ring','Pengingat Custom','3','#0e7490')}
     ${statCard('history','Selesai Bulan Ini','5','#16a34a')}
   </div>
+  ${miniCalendar(marked)}
   <div class="card">
     <div style="font-weight:800;margin-bottom:10px">Jadwal Terdekat</div>
     ${schedules.map(s=>`
@@ -368,6 +434,8 @@ function pageProvDash(){
     ${statCard('star','Rating Rata-rata','4.8','#d97706')}
     ${statCard('wallet','Komisi Tertunggak','Rp 42rb','#4338ca')}
   </div>
+  ${barChart('Booking Masuk 7 Hari Terakhir','Jumlah booking per hari',[{l:'Sen',v:2},{l:'Sel',v:4},{l:'Rab',v:3},{l:'Kam',v:5},{l:'Jum',v:6},{l:'Sab',v:8},{l:'Min',v:5}],'#1f6fe0')}
+  <div style="height:14px"></div>
   <div class="card">
     <div style="font-weight:800;margin-bottom:10px">Booking Masuk Terbaru</div>
     ${bookings.map(b=>`
@@ -424,6 +492,10 @@ function pageAdminDash(){
     ${statCard('shield-check','Provider Aktif','86','#16a34a')}
     ${statCard('hourglass','Menunggu Verifikasi','7','#d97706')}
     ${statCard('receipt','Transaksi Bulan Ini','312','#0e7490')}
+  </div>
+  <div class="chart-grid" style="margin-bottom:16px">
+    ${barChart('Transaksi 7 Hari Terakhir','Jumlah transaksi per hari',[{l:'Sen',v:38},{l:'Sel',v:45},{l:'Rab',v:41},{l:'Kam',v:52},{l:'Jum',v:60},{l:'Sab',v:71},{l:'Min',v:55}],'#1f6fe0')}
+    ${barChart('Komisi Terkumpul (Rp jt)','Pendapatan komisi per hari',[{l:'Sen',v:1.9},{l:'Sel',v:2.2},{l:'Rab',v:2.0},{l:'Kam',v:2.6},{l:'Jum',v:3.0},{l:'Sab',v:3.5},{l:'Min',v:2.7}],'#16a34a','jt')}
   </div>
   <div class="card"><div style="font-weight:800;margin-bottom:10px">Antrian Verifikasi Provider</div>
   ${providerQueue.map(p=>`<div class="list-item"><div class="avatar" style="background:#dc2626">${p.name[0]}</div><div style="flex:1"><div style="font-weight:700;font-size:13.5px">${p.name}</div><div style="font-size:12px;color:var(--muted)">${p.cat} · ${p.date}</div></div><button class="btn btn-primary btn-sm" onclick="openModal('verifyProvider')">Tinjau</button></div>`).join('')}
